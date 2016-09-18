@@ -1,10 +1,14 @@
+CC = gcc
+CFLAGS = -g -Wall
+
+
 all: w4118_sh
 
 w4118_sh: shell.o
-	gcc shell.o -o w4118_sh
+	$(CC) $(CFLAGS) shell.o -o w4118_sh
 
 shell.o: shell.c
-	gcc -c shell.c
+	$(CC) $(CFLAGS) -c shell.c
 
 clean:
 	rm -f *.o 
