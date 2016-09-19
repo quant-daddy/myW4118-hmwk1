@@ -8,6 +8,7 @@
 // typedef struct command;
 
 #define MAXARGS 20
+#define MAXHIST 100
 struct command{
 	char *script_name;
 	char *arguments[MAXARGS];
@@ -21,15 +22,24 @@ int main()
 	size_t len = 0;
 	ssize_t read = 0;
 	struct command *cmd;
+	char *history_array[MAXHIST] = {NULL};
+	int hist_count = 0;
+	int head = 0;
 	while (1) {
 		printf("$");
 		read = getline(&line, &len, stdin);
+		if (read>0){
+			hist_count++;
+			history_array[array_index(head++)] = deep_copy(line);
+		}
 		cmd = parse_command(line);
+		printf("%s",cmd->script_name);
 		int count = 0;
 		char *token;
-		while((token=cmd->arguments[count++]))
+		while((token=cmd->arguments[count]))
 		{
-			printf("%d: %s\n",count, token);
+			printf("%d: %s",count, token);
+			count++;
 		}
 		printf("command parsed\n");
 		// printf("%s\n", cmd->script_name);
@@ -48,7 +58,8 @@ int main()
 		}
 		else if (pid == 0){
 			printf("About to execute the command in child process\n");
-			execv(cmd->script_name, cmd->arguments);
+			execv(cmd->arguments[0], cmd->arguments);
+			exit(1);
 		}
 		else {
 			printf("pid in parent: %d", (int) pid);
@@ -85,10 +96,18 @@ struct command *parse_command(char *line)
 	{
 		cmd->arguments[++count] = token;
 	}
-	cmd->arguments[++count] = 0;
+	cmd->arguments[++count] = (char *) NULL;
 	return(cmd);
 }
 
+int array_index(int i){
+	if (i<0)
+		return(MAXHIST+i);
+	else if (i>MAXHIST-1)
+		return(i-MAXHIST);
+	else
+		return(i);
+}
 // struct command parse_command(char *line)
 // {
 // 	struct command parsed_command;
