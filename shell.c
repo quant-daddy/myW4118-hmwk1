@@ -26,7 +26,7 @@ int main()
 	size_t len = 0;
 	ssize_t read = 0;
 	struct command *cmd;
-	char *curr_dir = NULL;
+	char *curr_dir = (char *)malloc(500);
 	// char *history_array[MAXHIST] = {NULL};
 	// int hist_count = 0;
 	// int head = 0;
@@ -38,16 +38,13 @@ int main()
 		// 	history_array[array_index(head++)] = deep_copy(line);
 		// }
 		cmd = parse_command(line);
-		// if (((strcmp(cmd->script_name,"/bin/ls")==0) && ((cmd->arguments[1]==(char *)NULL)) && curr_dir))
-		// {
-		// 	printf("%d\n", strcmp(cmd->script_name,"/bin/ls"));
-		// 	printf("%s\n", curr_dir);
-		// 	cmd->arguments[1] = curr_dir;
-		// 	cmd->arguments[2] = (char *)NULL;
-		// }
+		if (((strcmp(cmd->script_name,"/bin/ls")==0) && ((cmd->arguments[1]==(char *)NULL)) && curr_dir))
+		{
+			cmd->arguments[1] = curr_dir;
+			cmd->arguments[2] = (char *)NULL;
+		}
 		run_command(cmd, &curr_dir, line);
-		// if (curr_dir)
-		// 	printf("%s\n", curr_dir);
+		free(cmd);
 	};
 	// free(line);
 	return 0;
@@ -86,7 +83,7 @@ void run_command(struct command *cmd, char **curr_dir, char *line)
 	else if (strcmp(cmd->script_name,"cd")==0)
 	{
 		if ((cmd->arguments[1]))
-			*curr_dir = cmd->arguments[1];
+			strcpy(*curr_dir, cmd->arguments[1]);
 		else
 			perror("Error: Not a valid command");
 	}
@@ -102,8 +99,7 @@ void run_command(struct command *cmd, char **curr_dir, char *line)
 			exit(1);
 		}
 		else {
-			while(pid != wait(0));
-			free(cmd);	
+			while(pid != wait(0));	
 		}
 
 	}
@@ -117,8 +113,3 @@ int array_index(int i){
 	else
 		return(i);
 }
-// struct command parse_command(char *line)
-// {
-// 	struct command parsed_command;
-
-// }osiefoiesubfgoshb
