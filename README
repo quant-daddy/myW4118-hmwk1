@@ -4,8 +4,9 @@ Should be: It would be faster.
 Exercise 1.14
 When there are multiple users, one has to use time sharing system. Also, when the user wants to have different user profiles for himself like guest user. 
 Exercise 1.19
-
+Interrupts helps to return the control to operating system. The user program might get stuck and won't allow other program to run. 
 Exercise 1.27
+
 Exercise 2.9
 Exercise 2.18
 Exercise 2.21
