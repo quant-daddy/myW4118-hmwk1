@@ -27,6 +27,13 @@ int main()
 	ssize_t read = 0;
 	struct command *cmd;
 	char *curr_dir = (char *)malloc(500);
+	
+	if (curr_dir==NULL)
+	{
+		perror("Error: memory not allocated.");
+		exit(0);
+	}
+	strcpy(curr_dir, "");
 	// char *history_array[MAXHIST] = {NULL};
 	// int hist_count = 0;
 	// int head = 0;
@@ -38,7 +45,12 @@ int main()
 		// 	history_array[array_index(head++)] = deep_copy(line);
 		// }
 		cmd = parse_command(line);
-		if (((strcmp(cmd->script_name,"/bin/ls")==0) && ((cmd->arguments[1]==(char *)NULL)) && curr_dir))
+		if (((strcmp(cmd->script_name,"/bin/ls")==0) && ((cmd->arguments[1]==(char *)NULL)) && !(strcmp(curr_dir, "")==0)))
+		{
+			cmd->arguments[1] = curr_dir;
+			cmd->arguments[2] = (char *)NULL;
+		}
+		if (((strcmp(cmd->script_name,"/bin/pwd")==0) && ((cmd->arguments[1]==(char *)NULL)) && !(strcmp(curr_dir, "")==0)))
 		{
 			cmd->arguments[1] = curr_dir;
 			cmd->arguments[2] = (char *)NULL;
@@ -78,6 +90,7 @@ void run_command(struct command *cmd, char **curr_dir, char *line)
 	{
 		free(cmd);
 		free((char*)line);
+		free(*curr_dir);
 		exit(0);
 	}
 	else if (strcmp(cmd->script_name,"cd")==0)
@@ -85,7 +98,7 @@ void run_command(struct command *cmd, char **curr_dir, char *line)
 		if ((cmd->arguments[1]))
 			strcpy(*curr_dir, cmd->arguments[1]);
 		else
-			perror("Error: Not a valid command");
+			printf("%s\n","Error: Not a valid command");
 	}
 	else
 	{
@@ -96,6 +109,7 @@ void run_command(struct command *cmd, char **curr_dir, char *line)
 		}
 		else if (pid == 0){
 			execv(cmd->script_name, cmd->arguments);
+			perror("Error: couldn't run the executable");
 			exit(1);
 		}
 		else {
